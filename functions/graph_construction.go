@@ -34,16 +34,22 @@ func (g *Graph) AddEdge(from, to string) {
 		err := fmt.Errorf("Existing edge (%v --> %v)", from, to)
 		fmt.Println(err)
 	} else {
+		fromVertex.weights[toVertex.Name] = 1
+		toVertex.weights[fromVertex.Name] = 1
+		//		fmt.Println(fromVertex.weights)
 		fromVertex.adjacent = append(fromVertex.adjacent, toVertex)
 		toVertex.adjacent = append(toVertex.adjacent, fromVertex)
+
 	}
 }
 
 func (g *Graph) getVertex(name string) *Vertex {
 	for _, v := range g.vertices {
+		v.weights = make(map[string]int)
 		if v.Name == name {
 			return v
 		}
+
 	}
 	return nil
 }
@@ -60,14 +66,17 @@ func contains(s []*Vertex, name string) bool {
 func (g *Graph) Print() {
 	for _, v := range g.vertices {
 		fmt.Printf("\nVertex %v : ", v.Name)
-		for _, v := range v.adjacent {
-			fmt.Printf("%v ", v.Name)
+
+		for _, v := range v.weights {
+
+			fmt.Printf("%v", v)
 		}
 	}
 }
 
 func GraphConstruct(text []string) {
 	test := &Graph{}
+
 	for i, t := range text {
 		if i == 0 {
 			continue
@@ -130,5 +139,6 @@ func (g *Graph) DeleteAdjacent() {
 		}
 		v.adjacent = rplc
 	}
-	//	g.Print()
+
+	g.Print()
 }

@@ -12,6 +12,7 @@ type Graph struct {
 type Vertex struct {
 	Name     string
 	adjacent []*Vertex
+	weights  map[string]int
 }
 
 func (g *Graph) AddVertex(name string) {
@@ -27,7 +28,7 @@ func (g *Graph) AddEdge(from, to string) {
 	toVertex := g.getVertex(to)
 
 	if fromVertex == nil || toVertex == nil {
-		err := fmt.Errorf("Invalid edge (%v --> %v)", from, to)
+		err := fmt.Errorf("Invalid edge (%v --> %v)", fromVertex, toVertex)
 		fmt.Println(err.Error())
 	} else if contains(fromVertex.adjacent, to) {
 		err := fmt.Errorf("Existing edge (%v --> %v)", from, to)
@@ -81,7 +82,53 @@ func GraphConstruct(text []string) {
 		}
 		s := strings.Split(t, " ")
 		test.AddVertex(s[0])
+	}
+
+	test.BFS("b")
+
+	test.DeleteAdjacent()
+
+	fmt.Println()
+	fmt.Println(p)
+	//	test.Print()
+}
+
+var p = make(map[string]string)
+
+func (g *Graph) BFS(start string) {
+	var Q []string
+	used := make(map[string]int)
+	Q = append(Q, start)
+	used[start]++
+
+	for len(Q) > 0 {
+		fmt.Println(Q)
+		curr := Q[0]
+		Q = Q[1:]
+		to := g.getVertex(curr)
+		for _, val := range to.adjacent {
+			if used[val.Name] == 0 {
+				used[val.Name]++
+				Q = append(Q, val.Name)
+				p[val.Name] = curr
+			}
+		}
 
 	}
-	test.Print()
+}
+
+func (g *Graph) DeleteAdjacent() {
+
+	for x := "m"; p[x] != ""; x = p[x] {
+		// fmt.Printf(" <-- %v ", p[x])
+		v := g.getVertex(p[x])
+		var rplc []*Vertex
+		for _, val := range v.adjacent {
+			if val.Name != x {
+				rplc = append(rplc, val)
+			}
+		}
+		v.adjacent = rplc
+	}
+	//	g.Print()
 }

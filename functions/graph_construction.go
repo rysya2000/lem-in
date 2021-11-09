@@ -19,7 +19,8 @@ func (g *Graph) AddVertex(name string) {
 	if contains(g.vertices, name) {
 		fmt.Printf("vertex %v already exiting", name)
 	} else {
-		g.vertices = append(g.vertices, &Vertex{Name: name})
+		newVertex := &Vertex{Name: name, weights: map[string]int{}}
+		g.vertices = append(g.vertices, newVertex)
 	}
 }
 
@@ -34,6 +35,9 @@ func (g *Graph) AddEdge(from, to string) {
 		err := fmt.Errorf("Existing edge (%v --> %v)", from, to)
 		fmt.Println(err)
 	} else {
+		fromVertex.weights[to] = 1
+		toVertex.weights[from] = 1
+
 		fromVertex.adjacent = append(fromVertex.adjacent, toVertex)
 		toVertex.adjacent = append(toVertex.adjacent, fromVertex)
 	}
@@ -57,22 +61,35 @@ func contains(s []*Vertex, name string) bool {
 	return false
 }
 
-func (g *Graph) Print() {
+func (g *Graph) Print(end string) {
 	for _, v := range g.vertices {
-		fmt.Printf("\nVertex %v : ", v.Name)
-		for _, v := range v.adjacent {
-			fmt.Printf("%v ", v.Name)
+		fmt.Printf("\nVertex %v (%v) : ", v.Name, dist[v.Name])
+		for _, v2 := range v.adjacent {
+			fmt.Printf("[%v %v] ", v2.Name, v.weights[v2.Name])
 		}
 	}
+	fmt.Print("\n\n", end)
+	for x := end; p[x] != ""; x = p[x] {
+		fmt.Print(" --> ", p[x])
+	}
+	fmt.Println()
 }
 
-func GraphConstruct(text []string) {
+func GraphConstruct(text []string) (Graph, string, string) {
 	test := &Graph{}
+	start := ""
+	end := ""
+	dot := ""
 	for i, t := range text {
 		if i == 0 {
 			continue
 		}
-		if t[0] == '#' {
+		if t == "##start" {
+			dot = "s"
+			continue
+		}
+		if t == "##end" {
+			dot = "e"
 			continue
 		}
 		if strings.Contains(t, "-") {
@@ -81,34 +98,39 @@ func GraphConstruct(text []string) {
 			continue
 		}
 		s := strings.Split(t, " ")
+		if dot == "s" {
+			start = s[0]
+			dot = ""
+		}
+		if dot == "e" {
+			end = s[0]
+			dot = ""
+		}
 		test.AddVertex(s[0])
 	}
-
-	test.BFS("b")
-
-	test.DeleteAdjacent()
-
-	fmt.Println()
-	fmt.Println(p)
-	//	test.Print()
+	return *test, start, end
 }
 
 var p = make(map[string]string)
+var dist = make(map[string]int)
 
+// dijkstra algorithm
 func (g *Graph) BFS(start string) {
 	var Q []string
-	used := make(map[string]int)
+	for _, v := range g.vertices {
+		dist[v.Name] = 1e8
+	}
+	dist[start] = 0
 	Q = append(Q, start)
-	used[start]++
-
 	for len(Q) > 0 {
-		fmt.Println(Q)
+		//		fmt.Println(Q)
 		curr := Q[0]
 		Q = Q[1:]
 		to := g.getVertex(curr)
 		for _, val := range to.adjacent {
-			if used[val.Name] == 0 {
-				used[val.Name]++
+			length := to.weights[val.Name]
+			if dist[curr]+length < dist[val.Name] {
+				dist[val.Name] = dist[curr] + length
 				Q = append(Q, val.Name)
 				p[val.Name] = curr
 			}
@@ -117,11 +139,14 @@ func (g *Graph) BFS(start string) {
 	}
 }
 
-func (g *Graph) DeleteAdjacent() {
-
-	for x := "m"; p[x] != ""; x = p[x] {
-		// fmt.Printf(" <-- %v ", p[x])
+func (g *Graph) DeleteAdjacent(end string) {
+	v := g.getVertex(end)
+	v.weights[p[end]] = -1
+	for x := end; p[x] != ""; x = p[x] {
 		v := g.getVertex(p[x])
+		if p[p[x]] != "" {
+			v.weights[p[p[x]]] = -1
+		}
 		var rplc []*Vertex
 		for _, val := range v.adjacent {
 			if val.Name != x {
@@ -130,5 +155,8 @@ func (g *Graph) DeleteAdjacent() {
 		}
 		v.adjacent = rplc
 	}
-	//	g.Print()
+}
+
+func (g *Graph) Duplicate() {
+
 }

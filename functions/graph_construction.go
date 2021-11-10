@@ -2,143 +2,82 @@ package lemin
 
 import (
 	"fmt"
-	"strings"
 )
 
-type Graph struct {
-	vertices []*Vertex
+type Farm struct {
+	Rooms []*Room
 }
 
-type Vertex struct {
-	Name     string
-	adjacent []*Vertex
-	weights  map[string]int
+type Room struct {
+	Name   string
+	Tunnel []*Room
+	Weight map[string]int
 }
 
-func (g *Graph) AddVertex(name string) {
-	if contains(g.vertices, name) {
-		fmt.Printf("vertex %v already exiting", name)
+//AddRoom adds name of rooms to ant farm
+func (f *Farm) AddRoom(name string) {
+
+	if contains(f.Rooms, name) {
+		fmt.Printf("Room %v already exiting", name)
 	} else {
-		g.vertices = append(g.vertices, &Vertex{Name: name})
+		newRoom := &Room{Name: name, Weight: map[string]int{}}
+		f.Rooms = append(f.Rooms, newRoom)
 	}
+
 }
 
-func (g *Graph) AddEdge(from, to string) {
-	fromVertex := g.getVertex(from)
-	toVertex := g.getVertex(to)
+//AddTunnels adds tunnels and gives to all weight
+func (f *Farm) AddTunnels(from, to string) {
+	fromRoom := f.GetRoom(from)
+	toRoom := f.GetRoom(to)
 
-	if fromVertex == nil || toVertex == nil {
-		err := fmt.Errorf("Invalid edge (%v --> %v)", fromVertex, toVertex)
+	if fromRoom == nil || toRoom == nil {
+		err := fmt.Errorf("Invalid Room (%v --> %v)", fromRoom, toRoom)
 		fmt.Println(err.Error())
-	} else if contains(fromVertex.adjacent, to) {
-		err := fmt.Errorf("Existing edge (%v --> %v)", from, to)
-		fmt.Println(err)
+	} else if contains(fromRoom.Tunnel, to) {
+		err := fmt.Errorf("Existing Tunnel (%v --> %v)", from, to)
+		fmt.Println(err.Error())
 	} else {
-		fromVertex.weights[toVertex.Name] = 1
-		toVertex.weights[fromVertex.Name] = 1
-		//		fmt.Println(fromVertex.weights)
-		fromVertex.adjacent = append(fromVertex.adjacent, toVertex)
-		toVertex.adjacent = append(toVertex.adjacent, fromVertex)
+		fromRoom.Weight[to] = 1
+		toRoom.Weight[from] = 1
+
+		fromRoom.Tunnel = append(fromRoom.Tunnel, toRoom)
+		toRoom.Tunnel = append(toRoom.Tunnel, fromRoom)
 
 	}
 }
 
-func (g *Graph) getVertex(name string) *Vertex {
-	for _, v := range g.vertices {
-		v.weights = make(map[string]int)
+//GetRoom is giving Room struct information by name of the Room
+func (f *Farm) GetRoom(name string) *Room {
+	for _, v := range f.Rooms {
+		v.Weight = make(map[string]int)
 		if v.Name == name {
 			return v
 		}
-
 	}
 	return nil
 }
 
-func contains(s []*Vertex, name string) bool {
+//Print is for Ant Farm Graph Visualisation
+func (f *Farm) Print(end string) {
+	for _, v := range f.Rooms {
+		fmt.Printf("\nRoom %v (%v) : ", v.Name, dist[v.Name])
+		for _, v2 := range v.Tunnel {
+			fmt.Printf("[%v %v] ", v2.Name, v.Weight[v2.Name])
+		}
+	}
+	fmt.Print("\n\n", end)
+	for x := end; p[x] != ""; x = p[x] {
+		fmt.Print(" --> ", p[x])
+	}
+	fmt.Println()
+}
+
+func contains(s []*Room, name string) bool {
 	for _, v := range s {
 		if name == v.Name {
 			return true
 		}
 	}
 	return false
-}
-
-func (g *Graph) Print() {
-	for _, v := range g.vertices {
-		fmt.Printf("\nVertex %v : ", v.Name)
-
-		for _, v := range v.weights {
-
-			fmt.Printf("%v", v)
-		}
-	}
-}
-
-func GraphConstruct(text []string) {
-	test := &Graph{}
-
-	for i, t := range text {
-		if i == 0 {
-			continue
-		}
-		if t[0] == '#' {
-			continue
-		}
-		if strings.Contains(t, "-") {
-			r := strings.Split(t, "-")
-			test.AddEdge(r[0], r[1])
-			continue
-		}
-		s := strings.Split(t, " ")
-		test.AddVertex(s[0])
-	}
-
-	test.BFS("b")
-
-	test.DeleteAdjacent()
-
-	fmt.Println()
-	fmt.Println(p)
-	//	test.Print()
-}
-
-var p = make(map[string]string)
-
-func (g *Graph) BFS(start string) {
-	var Q []string
-	used := make(map[string]int)
-	Q = append(Q, start)
-	used[start]++
-
-	for len(Q) > 0 {
-		fmt.Println(Q)
-		curr := Q[0]
-		Q = Q[1:]
-		to := g.getVertex(curr)
-		for _, val := range to.adjacent {
-			if used[val.Name] == 0 {
-				used[val.Name]++
-				Q = append(Q, val.Name)
-				p[val.Name] = curr
-			}
-		}
-
-	}
-}
-
-func (g *Graph) DeleteAdjacent() {
-
-	for x := "m"; p[x] != ""; x = p[x] {
-		// fmt.Printf(" <-- %v ", p[x])
-		v := g.getVertex(p[x])
-		var rplc []*Vertex
-		for _, val := range v.adjacent {
-			if val.Name != x {
-				rplc = append(rplc, val)
-			}
-		}
-		v.adjacent = rplc
-	}
-
-	g.Print()
 }

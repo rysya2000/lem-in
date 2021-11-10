@@ -15,6 +15,18 @@ func main() {
 		return
 	}
 
-	GraphConstruct(text)
+	antFarm, startRoom, endRoom, ant := FileProcessing(text)
 
+	fmt.Println(ant)
+	//	step 1: dijkstra
+	antFarm.BFS(startRoom)
+
+	antFarm.Print(endRoom)
+
+	//	step 2: inversing edges from found path with negative costs
+	//!!!! have problem with negative costs in example00.txt
+	antFarm.DeleteAdjacent(endRoom)
+
+	// step 2.1: duplicate all intermediate vertices
+	antFarm.Print(endRoom)
 }

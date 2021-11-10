@@ -50,7 +50,6 @@ func (f *Farm) AddTunnels(from, to string) {
 //GetRoom is giving Room struct information by name of the Room
 func (f *Farm) GetRoom(name string) *Room {
 	for _, v := range f.Rooms {
-		v.Weight = make(map[string]int)
 		if v.Name == name {
 			return v
 		}

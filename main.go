@@ -27,6 +27,8 @@ func main() {
 	//!!!! have problem with negative costs in example00.txt
 	antFarm.DeleteAdjacent(endRoom)
 
+	antFarm.FordBellman(startRoom)
+
 	// step 2.1: duplicate all intermediate vertices
 	antFarm.Print(endRoom)
 }

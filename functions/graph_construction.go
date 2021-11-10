@@ -9,9 +9,10 @@ type Farm struct {
 }
 
 type Room struct {
-	Name   string
-	Tunnel []*Room
-	Weight map[string]int
+	Name    string
+	Tunnel  []*Room
+	Weight  map[string]int
+	Visited bool
 }
 
 //AddRoom adds name of rooms to ant farm

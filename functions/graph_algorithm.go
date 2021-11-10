@@ -49,33 +49,3 @@ func (f *Farm) DeleteAdjacent(end string) {
 // func (g *Farm) Duplicate() {
 
 // }
-
-func (f *Farm) FordBellman(start string) {
-	for _, v := range f.Rooms {
-		dist[v.Name] = 1e8
-	}
-	dist[start] = 0
-
-	for {
-		any := true
-		for _, v := range f.Rooms {
-			for _, v2 := range v.Tunnel {
-				if dist[v2.Name] < 1e8 {
-					any = false
-					dist[v2.Name] = Min(v.Weight[v2.Name], dist[v2.Name])
-					fmt.Println(dist)
-				}
-			}
-		}
-		if any {
-			break
-		}
-	}
-}
-
-func Min(a, b int) int {
-	if a > b {
-		return b
-	}
-	return a
-}

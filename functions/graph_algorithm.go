@@ -46,6 +46,12 @@ func (f *Farm) DeleteAdjacent(end string) {
 	}
 }
 
-// func (g *Farm) Duplicate() {
+func (f *Farm) DeleteTunnel(end string) {
+	for _, r := range f.Rooms {
+		for _, t := range r.Name {
+			if r.Weight[string(t)] == -1 {
 
-// }
+			}
+		}
+	}
+}

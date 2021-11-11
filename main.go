@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/list"
 	"fmt"
 	"os"
 
@@ -21,16 +22,29 @@ func main() {
 	//	step 1: dijkstra
 	antFarm.BFS(startRoom)
 	antFarm.Print(endRoom)
+
 	antFarmReversed := &antFarm
+	v := antFarmReversed.GetRoom(startRoom)
+	cnt := 0
+	for _, _ = range v.Tunnel {
+		cnt++
+	}
+	L := list.New()
+	for cnt > 0 {
+		// step 3: dijkstra
+		antFarmReversed.DeleteAdjacent(endRoom)
 
-	//	step 2: inversing edges from found path with negative costs
+		//	step 2: inversing edges from found path with negative costs
+		if cnt != 1 {
+			antFarmReversed.BFS(startRoom)
+			arr := antFarmReversed.Print(endRoom)
+			L.PushBackList(&arr)
+		}
+		cnt--
+	}
+	for _, v := range L.Len() {
+		for _, v2 := range v {
 
-	antFarmReversed.DeleteAdjacent(endRoom)
-	antFarmReversed.BFS(startRoom)
-
-	// step 2.1: duplicate all intermediate vertices
-
-	antFarmReversed.Print(endRoom)
-	antFarmReversed.BFS(startRoom)
-	antFarmReversed.Print(endRoom)
+		}
+	}
 }

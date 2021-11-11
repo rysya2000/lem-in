@@ -1,6 +1,7 @@
 package lemin
 
 import (
+	"container/list"
 	"fmt"
 )
 
@@ -12,7 +13,7 @@ type Room struct {
 	Name    string
 	Tunnel  []*Room
 	Weight  map[string]int
-	Visited bool
+	Visited map[string]bool
 }
 
 //AddRoom adds name of rooms to ant farm
@@ -59,18 +60,23 @@ func (f *Farm) GetRoom(name string) *Room {
 }
 
 //Print is for Ant Farm Graph Visualisation
-func (f *Farm) Print(end string) {
+func (f *Farm) Print(end string) list.List {
 	for _, v := range f.Rooms {
 		fmt.Printf("\nRoom %v (%v) : ", v.Name, dist[v.Name])
 		for _, v2 := range v.Tunnel {
 			fmt.Printf("[%v %v] ", v2.Name, v.Weight[v2.Name])
 		}
 	}
+	List := list.New()
+	List.PushBack(end)
+
 	fmt.Print("\n\n", end)
 	for x := end; p[x] != ""; x = p[x] {
+		List.PushBack(p[x])
 		fmt.Print(" --> ", p[x])
 	}
 	fmt.Println()
+	return *List
 }
 
 func contains(s []*Room, name string) bool {

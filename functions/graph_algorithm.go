@@ -13,7 +13,15 @@ func (f *Farm) BFS(start string) {
 	dist[start] = 0
 	Q = append(Q, start)
 	for len(Q) > 0 {
-		fmt.Println(Q)
+		// b := true
+		// for i := 0; i < len(Q)-1; i++ {
+		// 	if dist[Q[i]] != dist[Q[i+1]] {
+		// 		b = false
+		// 	}
+		// }
+		// if b {
+//		fmt.Println(Q)
+		// }
 		curr := Q[0]
 		Q = Q[1:]
 		to := f.GetRoom(curr)
@@ -46,12 +54,19 @@ func (f *Farm) DeleteAdjacent(end string) {
 	}
 }
 
-func (f *Farm) DeleteTunnel(end string) {
-	for _, r := range f.Rooms {
-		for _, t := range r.Name {
-			if r.Weight[string(t)] == -1 {
-
-			}
+func (f *Farm) DFS(v string, end string, path []string, used map[string]bool) {
+	if v == end {
+		fmt.Println(path)
+		return
+	}
+	to := f.GetRoom(v)
+	for _, val := range to.Tunnel {
+		if !used[val.Name] {
+			path = append(path, val.Name)
+			used[val.Name] = true
+			f.DFS(val.Name, end, path, used)
+			path = path[:len(path)-1]
+			used[val.Name] = false
 		}
 	}
 }

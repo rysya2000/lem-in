@@ -1,7 +1,5 @@
 package lemin
 
-import "fmt"
-
 var p = make(map[string]string)
 var dist = make(map[string]int)
 
@@ -20,7 +18,7 @@ func (f *Farm) BFS(start string) {
 		// 	}
 		// }
 		// if b {
-//		fmt.Println(Q)
+		//		fmt.Println(Q)
 		// }
 		curr := Q[0]
 		Q = Q[1:]
@@ -54,19 +52,19 @@ func (f *Farm) DeleteAdjacent(end string) {
 	}
 }
 
-func (f *Farm) DFS(v string, end string, path []string, used map[string]bool) {
-	if v == end {
-		fmt.Println(path)
-		return
-	}
-	to := f.GetRoom(v)
-	for _, val := range to.Tunnel {
-		if !used[val.Name] {
-			path = append(path, val.Name)
-			used[val.Name] = true
-			f.DFS(val.Name, end, path, used)
-			path = path[:len(path)-1]
-			used[val.Name] = false
-		}
-	}
-}
+// func (f *Farm) DFS(v string, end string, path []string, used map[string]bool) {
+// 	if v == end {
+// 		fmt.Println(path)
+// 		return
+// 	}
+// 	to := f.GetRoom(v)
+// 	for _, val := range to.Tunnel {
+// 		if !used[val.Name] {
+// 			path = append(path, val.Name)
+// 			used[val.Name] = true
+// 			f.DFS(val.Name, end, path, used)
+// 			path = path[:len(path)-1]
+// 			used[val.Name] = false
+// 		}
+// 	}
+// }

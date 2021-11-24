@@ -54,6 +54,7 @@ func main() {
 	res, _, _, _ := FileProcessing(text)
 	fmt.Println(paths)
 	used := make(map[string]int)
+	visited := make(map[string]int)
 
 	for i := 0; i < len(paths); i++ {
 		for j := 0; j < len(paths[i]); j++ {
@@ -68,6 +69,7 @@ func main() {
 			}
 		}
 	}
+
 	fmt.Println("-----------------------------------------------------")
 	//	res.DFS(startRoom, endRoom, []string{startRoom}, map[string]bool{startRoom: true})
 
@@ -82,6 +84,22 @@ func main() {
 		}
 		paths = append(paths, arr)
 	}
+
+	indexes := []int{}
+	for i := 0; i < len(paths); i++ {
+		for j := 1; j < len(paths[i])-1; j++ {
+			visited[paths[i][j]]++
+			if visited[paths[i][j]] > 1 {
+				indexes = append(indexes, i)
+			}
+		}
+	}
+	fmt.Println(indexes)
+	for i := 0; i < len(indexes); i++ {
+		paths = append(paths[:indexes[i]], paths[indexes[i]+1:]...)
+	}
+	fmt.Println(paths)
+
 	fmt.Println("---------------------------------------------------------------")
 
 	sizes := make([]int, len(paths))
@@ -122,16 +140,16 @@ Loop:
 					}
 					break Loop
 				}
-				fmt.Printf("[%v]", cnt)
+				//				fmt.Printf("[%v]", cnt)
 				for k := len(paths[j]) - cnt - 1; k >= 0; k-- {
 					ans[cnt] = append(ans[cnt], "L"+strconv.Itoa(n)+"-"+paths[j][k])
 					cnt++
 				}
 
-				paths[j] = append(paths[j], "_"+strconv.Itoa(n))
+				//				paths[j] = append(paths[j], "_"+strconv.Itoa(n))
 				n++
 			}
-			fmt.Print(paths[j][i], " ")
+			//			fmt.Print(paths[j][i], " ")
 		}
 		fmt.Println()
 	}

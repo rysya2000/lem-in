@@ -59,10 +59,6 @@ func main() {
 
 	for i := 0; i < len(paths); i++ {
 		for j := 0; j < len(paths[i]); j++ {
-			visited[paths[i][j]]++
-			if visited[paths[i][j]] > 1 && j > 0 && j < len(paths[i])-1 {
-				indexes = append(indexes, i)
-			}
 			if j+1 < len(paths[i]) {
 				used[paths[i][j]+paths[i][j+1]]++
 				used[paths[i][j+1]+paths[i][j]]++
@@ -74,7 +70,7 @@ func main() {
 			}
 		}
 	}
-
+	fmt.Println(indexes)
 	fmt.Println("-----------------------------------------------------")
 	//	res.DFS(startRoom, endRoom, []string{startRoom}, map[string]bool{startRoom: true})
 
@@ -89,7 +85,17 @@ func main() {
 		}
 		paths = append(paths, arr)
 	}
+	for i := 0; i < len(paths); i++ {
+		for j := 0; j < len(paths[i]); j++ {
+			visited[paths[i][j]]++
+			if visited[paths[i][j]] > 1 && j > 0 && j < len(paths[i])-1 {
+				fmt.Println(indexes)
+				indexes = append(indexes, i)
+			}
+		}
+	}
 
+	fmt.Println(paths)
 	fmt.Println(indexes)
 	for i := 0; i < len(indexes); i++ {
 		paths = append(paths[:indexes[i]], paths[indexes[i]+1:]...)

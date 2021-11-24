@@ -55,9 +55,14 @@ func main() {
 	fmt.Println(paths)
 	used := make(map[string]int)
 	visited := make(map[string]int)
+	indexes := []int{}
 
 	for i := 0; i < len(paths); i++ {
 		for j := 0; j < len(paths[i]); j++ {
+			visited[paths[i][j]]++
+			if visited[paths[i][j]] > 1 && j > 0 && j < len(paths[i])-1 {
+				indexes = append(indexes, i)
+			}
 			if j+1 < len(paths[i]) {
 				used[paths[i][j]+paths[i][j+1]]++
 				used[paths[i][j+1]+paths[i][j]]++
@@ -85,15 +90,6 @@ func main() {
 		paths = append(paths, arr)
 	}
 
-	indexes := []int{}
-	for i := 0; i < len(paths); i++ {
-		for j := 1; j < len(paths[i])-1; j++ {
-			visited[paths[i][j]]++
-			if visited[paths[i][j]] > 1 {
-				indexes = append(indexes, i)
-			}
-		}
-	}
 	fmt.Println(indexes)
 	for i := 0; i < len(indexes); i++ {
 		paths = append(paths[:indexes[i]], paths[indexes[i]+1:]...)
@@ -140,13 +136,13 @@ Loop:
 					}
 					break Loop
 				}
-				//				fmt.Printf("[%v]", cnt)
+				// fmt.Printf("[%v]", cnt)
 				for k := len(paths[j]) - cnt - 1; k >= 0; k-- {
 					ans[cnt] = append(ans[cnt], "L"+strconv.Itoa(n)+"-"+paths[j][k])
 					cnt++
 				}
 
-				//				paths[j] = append(paths[j], "_"+strconv.Itoa(n))
+				paths[j] = append(paths[j], "_"+strconv.Itoa(n))
 				n++
 			}
 			//			fmt.Print(paths[j][i], " ")

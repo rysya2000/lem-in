@@ -18,6 +18,15 @@ func (f *Farm) BFS(start string) {
 	dist[start] = 0
 	route = append(route, start)
 	for len(route) > 0 {
+		b := true
+		for i := 0; i < len(route)-1; i++ {
+			if dist[route[i]] != dist[route[i+1]] {
+				b = false
+			}
+		}
+		if b {
+			fmt.Println(route)
+		}
 		curr := route[0]
 		route = route[1:]
 		to := f.GetRoom(curr)
@@ -36,8 +45,9 @@ func (f *Farm) BFS(start string) {
 func (f *Farm) DeleteAdjacent(end string) {
 	v := f.GetRoom(end)
 	v.Weight[p[end]] = -1
-
+	fmt.Printf("%v --> ", end)
 	for x := end; p[x] != ""; x = p[x] {
+		fmt.Printf("%v --> ", p[x])
 		v := f.GetRoom(p[x])
 		if p[p[x]] != "" {
 			v.Weight[p[p[x]]] = -1
@@ -51,6 +61,7 @@ func (f *Farm) DeleteAdjacent(end string) {
 		}
 		v.Tunnel = rplc
 	}
+	fmt.Println()
 }
 
 //CreatingFinalFarm is deleting paths with repetitive direction to avoid traffic jams
@@ -114,6 +125,7 @@ func PrintResult(paths [][]string, ant int, endRoom string) {
 		m = 2
 	}
 	ans := make([][]string, m-1)
+	fmt.Println(paths, "\n\n")
 LOOP:
 	for i := 0; ; i++ {
 		for j := 0; j < len(paths); j++ {

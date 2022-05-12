@@ -46,7 +46,7 @@ func main() {
 		}
 		startroomTunnels--
 	}
-
+	fmt.Println(paths, "\n\n")
 	res, _, _, _, _ := FileProcessing(text)
 	res.CreatingFinalFarm(paths)
 
@@ -60,6 +60,5 @@ func main() {
 		}
 		paths = append(paths, arr)
 	}
-
 	PrintResult(paths, ant, endRoom)
 }
